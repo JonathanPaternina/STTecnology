@@ -23,8 +23,8 @@ namespace LDAP.API.Services
                 ldapConnection.Connect(ldapServer, LdapConnection.DefaultPort);
                 ldapConnection.Bind(LdapConnection.LdapV3, ldapAdminUsername, ldapAdminPassword);
 
-                //var userDn = $"uid={username},ou=users,dc=example,dc=com";
-                //ldapConnection.Bind(LdapConnection.LdapV3, userDn, password);
+                var userDn = $"uid={username},ou=users,dc=example,dc=com";
+                ldapConnection.Bind(LdapConnection.LdapV3, userDn, password);
 
                 return true; // Usuario autenticado
             }
