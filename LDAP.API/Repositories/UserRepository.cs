@@ -16,16 +16,24 @@ namespace LDAP.API.Repositories
 
         public void SaveUser(UserInfo user)
         {
-            var parameters = new[]
+            using (var connection = new SqlConnection(_context.Database.GetDbConnection().ConnectionString))
             {
-                new SqlParameter("@Username", SqlDbType.NVarChar) { Value = user.Username },
-                new SqlParameter("@Email", SqlDbType.NVarChar) { Value = user.Email },
-                new SqlParameter("@DisplayName", SqlDbType.NVarChar) { Value = user.DisplayName },
-                new SqlParameter("@Department", SqlDbType.NVarChar) { Value = user.Department },
-                new SqlParameter("@Title", SqlDbType.NVarChar) { Value = user.Title }
-            };
+                connection.Open();
 
-            _context.Database.ExecuteSqlRaw("EXEC SaveUser @Username, @Email, @DisplayName, @Department, @Title", parameters);
+                using (var command = new SqlCommand("SaveUser", connection))
+                {
+                    command.CommandType = CommandType.StoredProcedure;
+
+                    // Agregar parámetros al comando
+                    command.Parameters.Add(new SqlParameter("@Username", user.Username));
+                    command.Parameters.Add(new SqlParameter("@Email", user.Email));
+                    command.Parameters.Add(new SqlParameter("@DisplayName", user.DisplayName));
+                    command.Parameters.Add(new SqlParameter("@Department", user.Department));
+                    command.Parameters.Add(new SqlParameter("@Title", user.Title));
+
+                    command.ExecuteNonQuery();
+                }
+            }
         }
     }
 }
